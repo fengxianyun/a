@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.2"></script>
+<title>Insert title here</title>
+<style type="text/css">
+#text{height: 20%}
+#container{width: 80%;height: 80%;}
+</style>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.2"></script>
+</head>
+<body>
+<?php
+function connect()
+{
+ 	$mysql_server_name="localhost";         // 数据库服务器名称
+    $mysql_username="root";                 // 连接数据库用户名
+    $mysql_password="09317999011";                 // 连接数据库密码
+    $mysql_database="message";                  // 数据库的名字
+    
+    // 连接到数据库
+    $conn=mysql_connect($mysql_server_name, $mysql_username,$mysql_password) 
+            or die("Could not connect: ".mysql_error());
+    
+    // 从表中提取信息的sql语句
+    mysql_select_db("message",$conn);
+    // 执行sql查询
+    $result=mysql_query("select * from shop");
+    $points='';
+    $marker='';
+    $address='';
+    $phone='';
+    $context='';
+    $name='';
+    while($row=mysql_fetch_array($result,MYSQL_ASSOC))
+    {
+    	$points .= 'new BMap.Point('.$row["point"].'),';
+        
+        $marker .= 'var marker'.$i.' = new BMap.Marker(point['.$i.'],{icon:myIcon});';
+
+        $addOverlay .= 'map.addOverlay(marker'.$i.');';
+    }
+}
+connect();
+?>
+<script type="text/javascript">
+var map = new BMap.Map("container");
+var point = new BMap.Point(118.799346,32.063356);
+map.centerAndZoom(point, 14);
+</script>
+<?php 
+    echo "lll";
+	echo '<script> var point = '.$points.';  ';    // 坐标点
+    echo $marker;                                      // 创建标注
+    echo $addOverlay;                                  // 将标注添加到地图中
+    echo 'map.setViewport(point); ';                  // 调整地图的最佳视野为显示标注数组point
+    echo $addEventListener.' </script> '
+?> 
+<div id="text"></div>
+<div id="container"></div>
+</body>
+</html>
